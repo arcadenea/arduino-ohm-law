@@ -19,6 +19,7 @@ Serial.begin(9600);
 void loop()
 {
 
+  //tomamos 10 valores y los promediamos para disminuir el ruido	
   for(int i= 0; i<10;i++){
     rawVcc += analogRead(analogVcc);
     rawAmp += analogRead(analogAmp);   
@@ -37,6 +38,7 @@ void loop()
   //V = V1 + V2
   R2 = (Vin-vccvalue)/ampvalue;
   
+  //imprimimos los resultados por la salida serial
   Serial.print("\nrawVcc: ");
   Serial.print(rawVcc);
   Serial.print("\trawAmp: ");
@@ -47,7 +49,8 @@ void loop()
   Serial.print(vccvalue);
   Serial.print("\tR2: ");
   Serial.print(R2);
-  
+
+  ponemos en cero los valores para el siguiente ciclo  
   rawVcc = 0;
   rawAmp = 0;
 
