@@ -1,12 +1,15 @@
-int analogPin = 0;
-int analogAmp = 1;
+//This code uses a MAX471 module. It calculates a R2 resistor from a known R1 resistor and a Vcc input.
+
+int analogVcc = 1;
+int analogAmp = 0;
 int rawVcc = 0;
 int rawAmp = 0;
-int Vin= 5;
-float Vout= 0;
-float R1= 100;
-float R2= 0;
-float buffer= 0;
+float Vin = 5.0;
+float vccvalue = 0;
+float ampvalue = 0;
+float R1 = 100;
+float R2 = 0;
+float buffer = 0;
 
 void setup()
 {
@@ -15,25 +18,38 @@ Serial.begin(9600);
 
 void loop()
 {
-	rawVcc = analogRead(analogPin);
-	rawAmp = analogRead(analogAmp);
 
-if(rawVcc) 
-{
-	buffer= rawVcc * Vin;
-	Vout= (buffer)/1024.0;
-	buffer= (Vin/Vout) -1;
-	R2= R1 * buffer;
-	Serial.print("rawVcc: ");
-	Serial.println(rawVcc);
-	Serial.print("rawAmp: ");
-	Serial.println(rawAmp);
-	Serial.print("Vout: ");
-	Serial.println(Vout);
-	Serial.print("R2: ");
-	Serial.println(R2);
-	delay(1000);
-}
+  for(int i= 0; i<10;i++){
+    rawVcc += analogRead(analogVcc);
+    rawAmp += analogRead(analogAmp);   
+    delay(100);
+  }
+
+  rawVcc = rawVcc/10;
+  rawAmp = rawAmp/10;
+
+  //mapeamos los valores del ADC a su correspondiente unidad
+  vccvalue = rawVcc * Vin / 1024.0;
+  ampvalue = rawAmp * Vin / 1024.0;
+  
+  //calculamos la resistencia variable R2
+  //R = R1 + R2
+  //V = V1 + V2
+  R2 = (Vin-vccvalue)/ampvalue;
+  
+  Serial.print("\nrawVcc: ");
+  Serial.print(rawVcc);
+  Serial.print("\trawAmp: ");
+  Serial.print(rawAmp);
+  Serial.print("\tAmperes: ");
+  Serial.print(ampvalue);
+  Serial.print("\tVoltaje: ");  
+  Serial.print(vccvalue);
+  Serial.print("\tR2: ");
+  Serial.print(R2);
+  
+  rawVcc = 0;
+  rawAmp = 0;
 
 }
 
